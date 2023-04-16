@@ -1,25 +1,25 @@
 import socket
 
-sock = socket.socket()
+server_socket = socket.socket()
 
 # defining port and host
 host = 'localhost'
 port = 12345
 
 # binding to the host and port
-sock.bind((host, port))
+server_socket.bind((host, port))
 
 # accept up to 10 connections
-sock.listen(10)
+server_socket.listen(10)
 print('Server is listening...')
 
 while True:
     # establish connection with the clients.
-    con, addr = sock.accept()
-    print('Connected with ', addr)
+    connection, address = server_socket.accept()
+    print('Connected to: ' + address[0] + ':' + str(address[1]))
 
     # Get data from the client
-    req = con.recv(1024)
+    req = connection.recv(1024)
     filepath = req.decode()
     print("[Client]: Requested file path:", filepath)
 
@@ -29,11 +29,11 @@ while True:
             line = file.read(1024)
             # Keep sending data to the client
             while(line):
-                con.send(line)
+                connection.send(line)
                 line = file.read(1024)
         print('[Server] File has been transferred successfully.')
     except:
         message = "error_unique".encode()
-        con.send(message)
+        connection.send(message)
 
-    con.close()
+    connection.close()
